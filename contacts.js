@@ -10,7 +10,7 @@ const updateContacts = async (newContact) => {
 }
 
 async function listContacts() {
-  const data = await fs.readFile(contactsPath, utf8)
+  const data = await fs.readFile(contactsPath, 'utf-8')
   const contacts = JSON.parse(data)
   return contacts
 }
@@ -37,13 +37,13 @@ async function removeContact(contactId) {
 
 async function addContact(name, email, phone) {
   const contacts = await listContacts(contactsPath)
-  const id = nanoid
-  const newContact = { name, email, phone, id }
+  if (!email || !phone) {
+    throw new Error('email and phone fields must be filled')
+  }
+  const newContact = { name, email, phone, id: nanoid() }
   contacts.push(newContact)
   await updateContacts(contacts)
   return newContact
 }
-
-addContact()
 
 module.exports = { listContacts, getContactById, removeContact, addContact }
